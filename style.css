@@ -1,0 +1,26 @@
+body {
+  background-color: #f8f9fa;
+  font-family: 'Arial', sans-serif;
+}
+
+.container {
+  max-width: 800px;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+}
+
+.table {
+  margin-top: 20px;
+}
+
+.btn-out-of-stock {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-out-of-stock:hover {
+  background-color: #c82333;
+}
