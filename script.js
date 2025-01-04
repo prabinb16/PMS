@@ -35,7 +35,10 @@ function renderDrugs() {
       (drug) => `
       <tr>
         <td>${drug.name}</td>
-        <td>${drug.quantity}</td>
+        <td>
+          <span id="quantity-${drug.id}">${drug.quantity}</span>
+          <input type="number" id="editQuantity-${drug.id}" value="${drug.quantity}" class="form-control d-none" style="width: 80px;">
+        </td>
         <td>Rs ${drug.price}</td>
         <td>
           <button class="btn btn-sm ${
@@ -45,7 +48,7 @@ function renderDrugs() {
           </button>
         </td>
         <td>
-          <button class="btn btn-sm btn-warning" onclick="editDrug(${drug.id})">Edit</button>
+          <button class="btn btn-sm btn-warning" onclick="editQuantity(${drug.id})">Edit Quantity</button>
           <button class="btn btn-sm btn-danger" onclick="deleteDrug(${drug.id})">Delete</button>
         </td>
       </tr>
@@ -62,17 +65,22 @@ function toggleOutOfStock(id) {
   renderDrugs();
 }
 
-// Edit drug
-function editDrug(id) {
-  const drug = drugs.find((drug) => drug.id === id);
-  document.getElementById('drugName').value = drug.name;
-  document.getElementById('drugQuantity').value = drug.quantity;
-  document.getElementById('drugPrice').value = drug.price;
+// Edit quantity
+function editQuantity(id) {
+  const quantitySpan = document.getElementById(`quantity-${id}`);
+  const quantityInput = document.getElementById(`editQuantity-${id}`);
 
-  // Remove the drug from the list
-  drugs = drugs.filter((drug) => drug.id !== id);
-  saveDrugs();
-  renderDrugs();
+  if (quantitySpan.classList.contains('d-none')) {
+    // Save the updated quantity
+    const drug = drugs.find((drug) => drug.id === id);
+    drug.quantity = quantityInput.value;
+    saveDrugs();
+    renderDrugs();
+  } else {
+    // Show the input field
+    quantitySpan.classList.add('d-none');
+    quantityInput.classList.remove('d-none');
+  }
 }
 
 // Delete drug
