@@ -3,6 +3,7 @@ let drugs = [];
 // Load drugs from localStorage
 if (localStorage.getItem('drugs')) {
   drugs = JSON.parse(localStorage.getItem('drugs'));
+  console.log('Loaded drugs from localStorage:', drugs);
   renderDrugs();
 }
 
@@ -34,6 +35,7 @@ document.getElementById('drugForm').addEventListener('submit', function (e) {
   };
 
   drugs.push(newDrug);
+  console.log('Added new drug:', newDrug);
   saveDrugs();
   renderDrugs();
   e.target.reset();
@@ -41,6 +43,7 @@ document.getElementById('drugForm').addEventListener('submit', function (e) {
 
 // Render drugs in the table
 function renderDrugs() {
+  console.log('Rendering drugs:', drugs);
   const drugList = document.getElementById('drugList');
   drugList.innerHTML = drugs
     .map(
@@ -69,61 +72,7 @@ function renderDrugs() {
     .join('');
 }
 
-// Toggle out of stock status
-function toggleOutOfStock(id) {
-  const drug = drugs.find((drug) => drug.id === id);
-  drug.outOfStock = !drug.outOfStock;
-  saveDrugs();
-  renderDrugs();
-}
-
-// Edit quantity
-function editQuantity(id) {
-  const quantitySpan = document.getElementById(`quantity-${id}`);
-  const quantityInput = document.getElementById(`editQuantity-${id}`);
-
-  if (quantitySpan.classList.contains('d-none')) {
-    // Save the updated quantity
-    const newQuantity = parseInt(quantityInput.value);
-
-    // Validate quantity (must be non-negative)
-    if (newQuantity < 0) {
-      alert("Quantity cannot be negative. Please enter a valid quantity.");
-      return;
-    }
-
-    const drug = drugs.find((drug) => drug.id === id);
-    drug.quantity = newQuantity;
-    saveDrugs();
-    renderDrugs();
-  } else {
-    // Show the input field
-    quantitySpan.classList.add('d-none');
-    quantityInput.classList.remove('d-none');
-  }
-}
-
-// Confirm before deleting a drug
-function confirmDelete(id) {
-  const confirmDelete = confirm("Are you sure you want to delete this drug?");
-  if (confirmDelete) {
-    deleteDrug(id);
-  }
-}
-
-// Delete drug
-function deleteDrug(id) {
-  drugs = drugs.filter((drug) => drug.id !== id);
-  saveDrugs();
-  renderDrugs();
-}
-
-// Save drugs to localStorage
 function saveDrugs() {
   localStorage.setItem('drugs', JSON.stringify(drugs));
-}
-
-// Format price with commas (e.g., Rs 1,330.00)
-function formatPrice(price) {
-  return `Rs ${price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+  console.log('Saved drugs to localStorage:', drugs);
 }
