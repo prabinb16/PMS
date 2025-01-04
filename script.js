@@ -10,8 +10,20 @@ if (localStorage.getItem('drugs')) {
 document.getElementById('drugForm').addEventListener('submit', function (e) {
   e.preventDefault();
   const drugName = document.getElementById('drugName').value;
-  const drugQuantity = document.getElementById('drugQuantity').value;
-  const drugPrice = document.getElementById('drugPrice').value;
+  const drugQuantity = parseInt(document.getElementById('drugQuantity').value);
+  const drugPrice = parseFloat(document.getElementById('drugPrice').value);
+
+  // Validate quantity (must be non-negative)
+  if (drugQuantity < 0) {
+    alert("Quantity cannot be negative. Please enter a valid quantity.");
+    return;
+  }
+
+  // Validate price (must be non-negative)
+  if (drugPrice < 0) {
+    alert("Price cannot be negative. Please enter a valid price.");
+    return;
+  }
 
   const newDrug = {
     id: Date.now(),
@@ -39,7 +51,7 @@ function renderDrugs() {
           <span id="quantity-${drug.id}">${drug.quantity}</span>
           <input type="number" id="editQuantity-${drug.id}" value="${drug.quantity}" class="form-control d-none" style="width: 80px;">
         </td>
-        <td>Rs ${drug.price}</td>
+        <td>${formatPrice(drug.price)}</td>
         <td>
           <button class="btn btn-sm ${
             drug.outOfStock ? 'btn-out-of-stock' : 'btn-success'
@@ -49,7 +61,7 @@ function renderDrugs() {
         </td>
         <td>
           <button class="btn btn-sm btn-warning" onclick="editQuantity(${drug.id})">Edit Quantity</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteDrug(${drug.id})">Delete</button>
+          <button class="btn btn-sm btn-danger" onclick="confirmDelete(${drug.id})">Delete</button>
         </td>
       </tr>
     `
@@ -72,14 +84,30 @@ function editQuantity(id) {
 
   if (quantitySpan.classList.contains('d-none')) {
     // Save the updated quantity
+    const newQuantity = parseInt(quantityInput.value);
+
+    // Validate quantity (must be non-negative)
+    if (newQuantity < 0) {
+      alert("Quantity cannot be negative. Please enter a valid quantity.");
+      return;
+    }
+
     const drug = drugs.find((drug) => drug.id === id);
-    drug.quantity = quantityInput.value;
+    drug.quantity = newQuantity;
     saveDrugs();
     renderDrugs();
   } else {
     // Show the input field
     quantitySpan.classList.add('d-none');
     quantityInput.classList.remove('d-none');
+  }
+}
+
+// Confirm before deleting a drug
+function confirmDelete(id) {
+  const confirmDelete = confirm("Are you sure you want to delete this drug?");
+  if (confirmDelete) {
+    deleteDrug(id);
   }
 }
 
@@ -93,4 +121,9 @@ function deleteDrug(id) {
 // Save drugs to localStorage
 function saveDrugs() {
   localStorage.setItem('drugs', JSON.stringify(drugs));
+}
+
+// Format price with commas (e.g., Rs 1,330.00)
+function formatPrice(price) {
+  return `Rs ${price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
 }
