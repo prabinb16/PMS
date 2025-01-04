@@ -71,7 +71,15 @@ function renderDrugs() {
     )
     .join('');
 }
+function getPrefsClasses(prefs) {
+  // Ensure prefs is an object
+  prefs = prefs || {}; // Fallback to an empty object if prefs is undefined or null
 
+  // Now safely use Object.entries
+  return Object.entries(prefs).map(([key, value]) => {
+    // Your logic here
+  });
+}
 function saveDrugs() {
   localStorage.setItem('drugs', JSON.stringify(drugs));
   console.log('Saved drugs to localStorage:', drugs);
